@@ -1,0 +1,36 @@
+{
+  "name": "trichy-insight-api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "node ./build.mjs",
+    "start": "node --enable-source-maps ./dist/index.mjs"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1045.0",
+    "@supabase/supabase-js": "^2.49.4",
+    "compression": "^1.8.1",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "express": "^5.0.1",
+    "openai": "^4.104.0",
+    "pg": "^8.13.3",
+    "pino": "^9.7.0",
+    "pino-http": "^10.4.0",
+    "web-push": "^3.6.7"
+  },
+  "devDependencies": {
+    "@types/compression": "^1.8.1",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^22.0.0",
+    "@types/pg": "^8.18.0",
+    "@types/web-push": "^3.6.4",
+    "esbuild": "^0.25.0",
+    "pino-pretty": "^13.0.0",
+    "tsx": "^4.21.0"
+  }
+}

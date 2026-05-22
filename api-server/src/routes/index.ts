@@ -1,0 +1,40 @@
+import { Router, type IRouter } from "express";
+import healthRouter from "./health";
+import postsRouter from "./posts";
+import zapierRouter from "./zapier";
+import socialRouter from "./social";
+import instagramRouter from "./instagram";
+import facebookRouter from "./facebook";
+import rssRouter from "./rss";
+import aggregatorRouter from "./aggregator";
+import aiGenerateRouter from "./ai-generate";
+import reelsRouter from "./reels";
+import googleNewsRouter from "./google-news";
+import sitemapRouter from "./sitemap";
+import automationRouter from "./automation";
+import youtubeOauthRouter from "./youtube-oauth";
+import pushRouter from "./push";
+import siteSettingsRouter from "./site-settings";
+import newsletterRouter from "./newsletter";
+
+const router: IRouter = Router();
+
+router.use(healthRouter);
+router.use(postsRouter);
+router.use(zapierRouter);
+router.use(automationRouter);
+router.use(socialRouter);
+router.use(instagramRouter);
+router.use(facebookRouter);
+router.use(rssRouter);
+router.use(aggregatorRouter);
+router.use(aiGenerateRouter);
+router.use(reelsRouter);
+router.use(googleNewsRouter);
+router.use(sitemapRouter);
+router.use(youtubeOauthRouter);
+router.use(pushRouter);
+router.use(siteSettingsRouter);
+router.use(newsletterRouter);
+
+export default router;
