@@ -126,7 +126,7 @@ export default function AdminChannelConfig() {
   const [igValidating, setIgValidating] = useState(false);
   const [igValidation, setIgValidation] = useState<{
     valid: boolean; error?: string; expires_human?: string; is_expired?: boolean;
-    has_publish_scope?: boolean; scopes?: string[]; account?: { username?: string; name?: string };
+    has_publish_scope?: boolean | null; scopes?: string[] | null; account?: { id?: string; user_id?: string; username?: string; name?: string };
     app_secret_set?: boolean;
   } | null>(null);
 
@@ -146,7 +146,7 @@ export default function AdminChannelConfig() {
 
   const WEBHOOK_CALLBACK_URL = "https://trichyinsight.online/api/instagram/webhook";
   const WEBHOOK_VERIFY_TOKEN = "trichy_insight_ig_webhook_2026";
-  const IG_USER_ID = "17841447727738548";
+  const IG_USER_ID = channels.instagram.igUserId || serverConfig?.instagram.igUserId || "";
 
   const copyText = (text: string, key: string) => {
     void navigator.clipboard.writeText(text).then(() => {
@@ -213,7 +213,7 @@ export default function AdminChannelConfig() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           access_token: channels.instagram.accessToken,
-          ig_user_id: channels.instagram.igUserId || "17841447727738548",
+          ig_user_id: channels.instagram.igUserId || undefined,
         }),
       });
       const data = (await res.json()) as typeof igValidation;
@@ -347,7 +347,7 @@ export default function AdminChannelConfig() {
                 <div className="flex items-start gap-2 bg-muted/50 rounded p-2.5">
                   <div className="mt-0.5 text-amber-500 shrink-0">⚠</div>
                   <p className="text-[11px] text-muted-foreground">
-                    Requires <strong>FACEBOOK_APP_SECRET</strong> (or INSTAGRAM_APP_SECRET) in Replit Secrets. The redirect goes back to <code className="text-[10px] bg-muted px-1 rounded">trichyinsight.online/admin</code> — must be listed as a valid OAuth redirect URI in your Meta App settings.
+                    Requires <strong>FACEBOOK_APP_SECRET</strong> (or INSTAGRAM_APP_SECRET) in Render environment variables. The redirect goes back to <code className="text-[10px] bg-muted px-1 rounded">trichyinsight.online/admin</code> — must be listed as a valid OAuth redirect URI in your Meta App settings.
                   </p>
                 </div>
               </div>
@@ -514,7 +514,7 @@ export default function AdminChannelConfig() {
                   value={channels.instagram.igUserId || IG_USER_ID}
                   onChange={(v) => updateIG("igUserId", v)}
                   placeholder={IG_USER_ID}
-                  hint="Your account ID — already set to 17841447727738548"
+                  hint="Use the account ID returned by the connected Instagram login; do not mix Facebook-linked and Instagram Login IDs"
                 />
                 {/* Server secret status */}
                 {serverConfig?.instagram.hasToken && (
@@ -526,12 +526,12 @@ export default function AdminChannelConfig() {
                     <KeyRound className="h-3.5 w-3.5 shrink-0" />
                     {channels.instagram.accessToken ? (
                       <span>
-                        <strong>Token saved in database + Replit secret.</strong> Fully configured.
+                        <strong>Token saved in database; server token also configured.</strong> Fully configured.
                       </span>
                     ) : (
                       <div className="flex items-center justify-between w-full gap-2">
                         <span>
-                          <strong>Replit secret detected</strong> ({serverConfig.instagram.tokenPrefix}) — server can post without a token here.
+                          <strong>Server environment token detected</strong> ({serverConfig.instagram.tokenPrefix}) — server can post without a token here.
                           Enter the token to also save it in the database for full sync.
                         </span>
                       </div>
@@ -545,7 +545,7 @@ export default function AdminChannelConfig() {
                   value={channels.instagram.accessToken}
                   onChange={(v) => updateIG("accessToken", v)}
                   placeholder="Paste the token generated from Meta for Developers here..."
-                  hint="Token must include instagram_basic and instagram_content_publish permissions"
+                  hint="Instagram Business Login requires instagram_business_basic and instagram_business_content_publish"
                 />
                 <div className="flex flex-wrap gap-2 pt-1">
                   <Button
@@ -585,14 +585,14 @@ export default function AdminChannelConfig() {
                       <>
                         {igValidation.account?.username && <p>Account: @{igValidation.account.username}</p>}
                         <p>Expires: {igValidation.expires_human ?? "Unknown"}{igValidation.is_expired ? " ⚠ EXPIRED" : ""}</p>
-                        <p>Publish permission: {igValidation.has_publish_scope ? "✓ Yes" : "✗ Missing — reconnect and grant instagram_content_publish"}</p>
+                        <p>Publish permission: {igValidation.has_publish_scope === true ? "✓ Confirmed" : igValidation.has_publish_scope === false ? "✗ Missing — verify Instagram publishing permissions" : "Not verified by token validation; test publishing separately"}</p>
                         {igValidation.scopes && igValidation.scopes.length > 0 && (
                           <p className="text-[10px] opacity-70">Scopes: {igValidation.scopes.join(", ")}</p>
                         )}
                       </>
                     )}
                     {!igValidation.app_secret_set && (
-                      <p className="text-amber-700 font-medium mt-1">⚠ INSTAGRAM_APP_SECRET not set — OAuth auto-save won't work. Add it in Replit Secrets.</p>
+                      <p className="text-amber-700 font-medium mt-1">⚠ INSTAGRAM_APP_SECRET not set — OAuth auto-save won't work. Add it in Render environment variables.</p>
                     )}
                   </div>
                 )}
